@@ -3,3 +3,5 @@
 
 # 忽略Python编译生成的文件夹
 __pycache__
+.venv
+.idea
