@@ -1,6 +1,7 @@
 # 小组开发说明
 ## 从哪里开始？
-1. fork 本项目，clone 自己的项目
+1. 善用本文件的目录
+2. fork 本项目，clone 自己的项目
 2. 用 pycharm 直接打开
 3. 修改 `.env.example` 为 `.env`
 
