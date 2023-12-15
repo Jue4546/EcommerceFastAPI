@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 import os
 from fastapi import HTTPException, Response, APIRouter
 import requests
@@ -29,6 +30,7 @@ async def get_markdown_post(markdown_url: str):
 
         # 使用 GitHub API 将 Markdown 转换为 HTML（使用 GFM 模式）
         github_api_url = "https://api.github.com/markdown"
+        load_dotenv()
         headers = {
             "Accept": "application/vnd.github.v3+json",
             "Authorization": os.getenv('GITHUB_TOKEN')

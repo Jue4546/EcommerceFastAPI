@@ -12,7 +12,7 @@ from app.services import user_service, auth_service
 router = APIRouter()
 
 
-@router.post("/user/auth", tags=["用户管理模块"], response_model=Token)
+@router.post("/auth", tags=["用户管理模块"], response_model=Token)
 async def auth_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     """用户认证路由"""
     user = auth_service.authenticate_user(form_data.username, form_data.password)
