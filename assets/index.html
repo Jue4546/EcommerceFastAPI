@@ -56,15 +56,19 @@
     <div style="margin: 5px 30px 0 30px;"><a href="/docs#">FastAPI</a> platform !</div>
 </div>
 
-<script>
-    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
-    const currentHour = new Date().getHours();
-    const body = document.querySelector("body");
+    <script>
+        const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+        const currentHour = new Date().getHours();
+        const body = document.querySelector("body");
 
-    if (prefersDarkScheme.matches || (currentHour >= 19 || currentHour < 7)) {
-        body.classList.add("dark-mode");
-    }
-</script>
+        if (prefersDarkScheme.matches || (currentHour >= 19 || currentHour < 7)) {
+            body.classList.add("dark-mode");
+        }
+    </script>
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
 </body>
 
 </html>
