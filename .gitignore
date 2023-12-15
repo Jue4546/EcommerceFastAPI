@@ -1,0 +1,5 @@
+# 忽略.env文件
+.env
+
+# 忽略Python编译生成的文件夹
+__pycache__
