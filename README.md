@@ -3,12 +3,15 @@
 1. 善用本文件的目录
 2. fork 本项目，clone 自己的项目
 2. 用 pycharm 直接打开
-3. 修改 `.env.example` 为 `.env`
+3. 复制 `.env.example` 另存为 `.env`
 
 ## 如何参与开发？
-1. 用 `git` 进行版本控制，修改文件用 `git add .`，一定数量的修改后 `git commit -m "此处写提交的信息，例如 add order_route""`
+1. 用 `git` 进行版本控制，修改文件用 `git add [那个文件]` 如果是pycharm几乎是自动的，不用特意处理；一定数量的修改后 `git commit -m "此处写提交的信息，例如 add order_route""`
 2. 及时进行同步 `git push -u origin main`
 3. 及时关注本仓库的更新，对自己的仓库同步。功能测试没问题后提交 `pull request`
+
+## TODO List
+- [ ] 注册、重置密码的邮件发送，以及下订单之后的邮件通知
 
 # 《需求规格说明书》
 > [!IMPORTANT]
