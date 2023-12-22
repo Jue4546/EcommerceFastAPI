@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from app.api.v1 import test_route, user_route
-from db.base import *
+from app.db.base import *
 
 app = FastAPI()
 
