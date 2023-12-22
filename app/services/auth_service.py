@@ -9,7 +9,7 @@ from passlib.context import CryptContext
 
 from app.db.crud.user_crud import get_user
 from app.models.token_model import TokenData
-from app.models.user_model import RegisterUser, BaseUser
+from app.models.user_model import RegisterUser, BaseUser, UserInDB
 
 SECRET_KEY = "2b0376b2fc0d109d50b512b5292fa726eb969caccb4cc60d14485f81957d2e55"
 ALGORITHM = "HS256"
@@ -28,12 +28,12 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-def authenticate_user(username: str, password: str):
+def authenticate_user(username: str, password: str) -> Union[UserInDB, str]:
     user = get_user(username)
     if not user:
-        return False
+        return "User not found"
     if not verify_password(password, user.hashed_password):
-        return False
+        return "Incorrect password"
     return user
 
 
@@ -102,7 +102,7 @@ async def get_current_user_db(token: str = Depends(oauth2_scheme)):
 
 async def get_current_active_user(current_user: BaseUser = Depends(get_current_user)):
     """获取当前用户：正常用户"""
-    if current_user.disabled:
+    if current_user.is_disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
