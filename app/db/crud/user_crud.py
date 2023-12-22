@@ -1,7 +1,9 @@
 from typing import List, Union
-from app.models.user_model import RegisterUser, UserInDB, BaseUser
-from app.db.base import SessionLocal
+
 from sqlalchemy import text
+
+from app.db.base import SessionLocal
+from app.models.user_model import RegisterUser, UserInDB, BaseUser
 
 
 def create_user(user: RegisterUser) -> BaseUser:

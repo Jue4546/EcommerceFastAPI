@@ -1,8 +1,9 @@
-from dotenv import load_dotenv
 import os
-from fastapi import HTTPException, Response, APIRouter
-import requests
 import re
+
+import requests
+from dotenv import load_dotenv
+from fastapi import HTTPException, Response, APIRouter
 
 router = APIRouter()
 

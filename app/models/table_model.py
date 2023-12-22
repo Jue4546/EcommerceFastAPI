@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
+
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
@@ -32,3 +33,13 @@ class Address(Base):
     is_default = Column(Boolean, default=False)
 
     user = relationship("User", back_populates="addresses")
+
+
+class VerificationCode(Base):
+    __tablename__ = 'verification_codes'
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String(100), unique=True, nullable=False)
+    code = Column(String(10), nullable=False)
+    created_at = Column(DateTime, nullable=False)
+    expiration_time = Column(DateTime, nullable=False)
+    is_used = Column(Boolean, default=False)

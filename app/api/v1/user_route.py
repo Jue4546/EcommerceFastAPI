@@ -3,7 +3,7 @@ from datetime import timedelta
 from typing import List
 
 from fastapi import APIRouter, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordRequestForm
 
 from app.models.token_model import *
 from app.models.user_model import *

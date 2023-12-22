@@ -1,6 +1,7 @@
 """用户模型"""
+from typing import Union
+
 from pydantic import BaseModel, EmailStr
-from typing import Union, Optional, List
 
 
 class BaseUser(BaseModel):

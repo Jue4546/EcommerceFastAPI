@@ -9,7 +9,7 @@ from passlib.context import CryptContext
 
 from app.db.crud.user_crud import get_user
 from app.models.token_model import TokenData
-from app.models.user_model import RegisterUser, BaseUser, UserInDB
+from app.models.user_model import BaseUser, UserInDB
 
 SECRET_KEY = "2b0376b2fc0d109d50b512b5292fa726eb969caccb4cc60d14485f81957d2e55"
 ALGORITHM = "HS256"

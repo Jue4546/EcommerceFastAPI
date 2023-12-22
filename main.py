@@ -1,7 +1,9 @@
+import subprocess
+
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
+
 from app.api.v1 import test_route, user_route
-from app.db.base import *
 
 app = FastAPI()
 
@@ -18,8 +20,6 @@ async def read_root():
 
 @app.on_event("startup")
 async def startup_event():
-    """初始化"""
-    if not tables_exist():
-        create_tables_if_not_exist()
-    if not admin_exist():
-        create_admin_if_not_exists()
+    """初始化：数据库"""
+    alembic_command = "alembic upgrade head"
+    subprocess.run(alembic_command, shell=True)

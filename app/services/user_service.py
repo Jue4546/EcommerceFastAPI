@@ -1,9 +1,9 @@
 """用户服务逻辑：services/user_service.py"""
 from typing import List
 
-from app.models.user_model import RegisterUser, UserInDB, BaseUser
 from app.db.crud.user_crud import create_user, check_existing_user_by_email, check_existing_user_by_name, update_user, \
     get_all_users
+from app.models.user_model import RegisterUser, BaseUser
 from app.services.auth_service import get_password_hash
 
 
