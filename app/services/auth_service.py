@@ -7,7 +7,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-from app.db.crud.user_crud import get_user
+from app.db.crud.user_crud import get_user, insert_verification_code
 from app.models.token_model import TokenData
 from app.models.user_model import BaseUser, UserInDB
 
@@ -106,3 +106,13 @@ async def get_current_active_user(current_user: BaseUser = Depends(get_current_u
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
+
+def generate_verification_code():
+    """生成6位数的验证码"""
+    import random
+    return "".join([str(random.randint(0, 9)) for _ in range(6)])
+
+
+def save_verification_code(email: str, code: str):
+    """保存验证码"""
+    insert_verification_code(email, code)

@@ -13,6 +13,7 @@ class BaseUser(BaseModel):
 
 
 class RegisterUser(BaseUser):
+    verification_code: str
     password: str
     hashed_password: Union[str, None] = None
 
