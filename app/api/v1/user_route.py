@@ -1,40 +1,14 @@
 """用户路由：api/user_route.py"""
-from datetime import timedelta
+
 from typing import List
 
-from fastapi import APIRouter, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import APIRouter, HTTPException, Depends
 
-from app.models.token_model import *
 from app.models.user_model import *
 from app.services import user_service, auth_service
 from app.utils import email_utils
+
 router = APIRouter()
-
-
-@router.post("/auth", tags=["用户管理模块"], response_model=Token)
-async def auth_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    """用户认证路由"""
-    user = auth_service.authenticate_user(form_data.username, form_data.password)
-    if isinstance(user, str):
-        error_message = user
-        if error_message == "User not found":
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
-            )
-        elif error_message == "Incorrect password":
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect password",
-                headers={"WWW-Authenticate": "Bearer"}
-            )
-    else:
-        access_token_expires = timedelta(minutes=auth_service.ACCESS_TOKEN_EXPIRE_MINUTES)
-        access_token = auth_service.create_access_token(
-            data={"sub": user.username}, expires_delta=access_token_expires
-        )
-        return {"access_token": access_token, "token_type": "bearer"}
 
 
 @router.post("/send-verification-code", tags=["用户管理模块"])

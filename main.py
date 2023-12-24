@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
 from app.api.v1 import test_route, user_route, auth_route
-from app.utils.email_utils import account
+from app.api.v1.auth_route import account
 
 app = FastAPI()
 
@@ -30,5 +30,5 @@ async def startup_event():
         print("Database initialization completed!")
     except subprocess.CalledProcessError as e:
         print(f"Error while initializing database: {e}")
-    if not account.is_authenticated:
-        account.authenticate()
+    # if not account.is_authenticated:
+    #    account.authenticate()
