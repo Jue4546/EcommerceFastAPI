@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
 from app.api.v1 import test_route, user_route, auth_route
+from app.api.v1.auth_route import account
 from app.utils.email_utils import account
 from app.api.v1.routes import orders
 from app.api.v1.routes import qproducts
