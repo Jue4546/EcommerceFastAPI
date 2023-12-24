@@ -9,7 +9,7 @@ from app.models.user_model import RegisterUser, UserInDB, BaseUser
 def insert_user(user: RegisterUser) -> BaseUser:
     """创建新用户并将其添加到数据库"""
     db = SessionLocal()
-    insert_query = text("INSERT INTO users (username, email, is_disabled, is_admin, password) VALUES "
+    insert_query = text("INSERT INTO user (username, email, is_disabled, is_admin, password) VALUES "
                         "(:username, :email, :is_disabled, :is_admin, :password)")
     db.execute(insert_query, {
         'username': user.username,
@@ -27,7 +27,7 @@ def insert_user(user: RegisterUser) -> BaseUser:
 def get_user(username: str, mode: str = None) -> Union[UserInDB, BaseUser, None]:
     """根据用户名从数据库中获取用户信息"""
     db = SessionLocal()
-    select_query = text("SELECT id, username, email, password, is_disabled, is_admin FROM users "
+    select_query = text("SELECT id, username, email, password, is_disabled, is_admin FROM user "
                         "WHERE username = :username")
     user_row = db.execute(select_query, {'username': username}).fetchone()
     db.close()
@@ -51,7 +51,7 @@ def get_user(username: str, mode: str = None) -> Union[UserInDB, BaseUser, None]
 def get_all_users() -> List[BaseUser]:
     """从数据库中获取所有用户信息"""
     db = SessionLocal()
-    select_all_query = text("SELECT id, username, email, password, is_disabled, is_admin FROM users")
+    select_all_query = text("SELECT id, username, email, password, is_disabled, is_admin FROM user")
     users_data = db.execute(select_all_query).fetchall()
     db.close()
     users_db = [BaseUser(**dict(user_data)) for user_data in users_data]
@@ -61,7 +61,7 @@ def get_all_users() -> List[BaseUser]:
 def check_existing_user_by_email(email: str) -> bool:
     """根据邮箱判断用户是否存在"""
     db = SessionLocal()
-    select_query = text("SELECT COUNT(*) FROM users WHERE email = :email")
+    select_query = text("SELECT COUNT(*) FROM user WHERE email = :email")
     count = db.execute(select_query, {'email': email}).fetchone()[0]
     db.close()
     return count > 0
@@ -70,7 +70,7 @@ def check_existing_user_by_email(email: str) -> bool:
 def check_existing_user_by_name(username: str) -> bool:
     """根据用户名判断用户是否存在"""
     db = SessionLocal()
-    select_query = text("SELECT COUNT(*) FROM users WHERE username = :username")
+    select_query = text("SELECT COUNT(*) FROM user WHERE username = :username")
     count = db.execute(select_query, {'username': username}).fetchone()[0]
     db.close()
     return count > 0
@@ -79,14 +79,14 @@ def check_existing_user_by_name(username: str) -> bool:
 def is_valid_verification_code(email: str, code: str) -> bool:
     db = SessionLocal()
     try:
-        query = text("SELECT id FROM verification_codes WHERE email = :email AND code = :code AND is_used = FALSE "
+        query = text("SELECT id FROM verification_code WHERE email = :email AND code = :code AND is_used = FALSE "
                      "AND expiration_time > CURRENT_TIMESTAMP")
         result = db.execute(query, {"email": email, "code": code}).fetchone()
 
         if result:
             # 如果存在有效的验证码，将 is_used 标记为已使用
             verification_code_id = result[0]
-            update_query = text("UPDATE verification_codes SET is_used = TRUE WHERE id = :id")
+            update_query = text("UPDATE verification_code SET is_used = TRUE WHERE id = :id")
             db.execute(update_query, {"id": verification_code_id})
             db.commit()
             return True
@@ -100,7 +100,7 @@ def insert_verification_code(email: str, code: str):
     db = SessionLocal()
     try:
         query = text("""
-            INSERT INTO verification_codes (email, code, created_at, expiration_time, is_used) 
+            INSERT INTO verification_code (email, code, created_at, expiration_time, is_used) 
             VALUES (:email, :code, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '10 MINUTE', FALSE)
             ON CONFLICT (email) DO UPDATE
             SET expiration_time = EXCLUDED.expiration_time
@@ -112,11 +112,10 @@ def insert_verification_code(email: str, code: str):
         db.close()
 
 
-
 def update_user(user_id: int, new_data: dict) -> bool:
     """根据用户ID更新用户信息"""
     db = SessionLocal()
-    update_query = text("UPDATE users SET username = :username, email = :email, password = :password "
+    update_query = text("UPDATE user SET username = :username, email = :email, password = :password "
                         "WHERE id = :user_id")
     db.execute(update_query, {
         'username': new_data['username'],

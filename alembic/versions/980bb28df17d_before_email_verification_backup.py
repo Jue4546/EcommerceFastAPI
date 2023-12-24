@@ -5,11 +5,6 @@ Revises:
 Create Date: 2023-12-22 20:44:16.839317
 
 """
-#Alembic 提供了一种规范的、可追踪的数据库变更管理机制
-#模型变更脚本生成： 当你修改 SQLAlchemy 模型时，Alembic 可以自动生成与模型变更相对应的数据库迁移脚本。
-#这样的脚本描述了如何将数据库从一个版本迁移到另一个版本，包括新增表、修改字段类型等操作。
-#数据库迁移执行：使用 Alembic 的命令行工具，你可以轻松地将生成的数据库迁移脚本应用到实际的数据库，实现数据库结构的变更。
-
 from typing import Sequence, Union
 
 import sqlalchemy as sa
