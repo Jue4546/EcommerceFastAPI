@@ -43,3 +43,12 @@ class VerificationCode(Base):
     created_at = Column(DateTime, nullable=False)
     expiration_time = Column(DateTime, nullable=False)
     is_used = Column(Boolean, default=False)
+
+
+class Token(Base):
+    __tablename__ = 'tokens'
+    id = Column(Integer, primary_key=True, index=True)
+    access_token = Column(String)
+    refresh_token = Column(String)
+    expires_at = Column(Integer)
+    is_expired = Column(Boolean)

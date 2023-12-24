@@ -8,7 +8,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from app.models.token_model import *
 from app.models.user_model import *
 from app.services import user_service, auth_service
-
+from app.utils import email_utils
 router = APIRouter()
 
 
@@ -37,18 +37,27 @@ async def auth_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()
         return {"access_token": access_token, "token_type": "bearer"}
 
 
-@router.post("/user/register", tags=["用户管理模块"])
-async def register_user(username: str, password: str, email: str):
+@router.post("/send-verification-code", tags=["用户管理模块"])
+async def send_verification_code(email: str):
+    """发送验证码路由"""
+    verification_code = auth_service.generate_verification_code()
+
+    success = email_utils.send_verification_email(email, verification_code)
+    if success:
+        auth_service.save_verification_code(email, verification_code)
+        return {"message": "Verification code sent successfully"}
+    else:
+        raise HTTPException(status_code=500, detail="Failed to send verification code, please try again later")
+
+
+@router.post("/register", tags=["用户管理模块"])
+async def register_user(username: str, password: str, email: str, verification_code: str):
     """用户注册路由"""
-    whitelisted_domains = ["example.com", "oky.services", "dbcd.oky.wiki"]
-    domain = email.split("@")[-1]
-    is_admin = domain in whitelisted_domains
     user = RegisterUser(
         username=username,
         password=password,
         email=email,
-        is_disabled=False,
-        is_admin=is_admin
+        verification_code=verification_code
     )
     try:
         new_user = user_service.register_new_user(user)

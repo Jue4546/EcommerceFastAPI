@@ -6,7 +6,7 @@ from app.db.base import SessionLocal
 from app.models.user_model import RegisterUser, UserInDB, BaseUser
 
 
-def create_user(user: RegisterUser) -> BaseUser:
+def insert_user(user: RegisterUser) -> BaseUser:
     """创建新用户并将其添加到数据库"""
     db = SessionLocal()
     insert_query = text("INSERT INTO users (username, email, is_disabled, is_admin, password) VALUES "
@@ -74,6 +74,43 @@ def check_existing_user_by_name(username: str) -> bool:
     count = db.execute(select_query, {'username': username}).fetchone()[0]
     db.close()
     return count > 0
+
+
+def is_valid_verification_code(email: str, code: str) -> bool:
+    db = SessionLocal()
+    try:
+        query = text("SELECT id FROM verification_codes WHERE email = :email AND code = :code AND is_used = FALSE "
+                     "AND expiration_time > CURRENT_TIMESTAMP")
+        result = db.execute(query, {"email": email, "code": code}).fetchone()
+
+        if result:
+            # 如果存在有效的验证码，将 is_used 标记为已使用
+            verification_code_id = result[0]
+            update_query = text("UPDATE verification_codes SET is_used = TRUE WHERE id = :id")
+            db.execute(update_query, {"id": verification_code_id})
+            db.commit()
+            return True
+        else:
+            return False
+    finally:
+        db.close()
+
+
+def insert_verification_code(email: str, code: str):
+    db = SessionLocal()
+    try:
+        query = text("""
+            INSERT INTO verification_codes (email, code, created_at, expiration_time, is_used) 
+            VALUES (:email, :code, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '10 MINUTE', FALSE)
+            ON CONFLICT (email) DO UPDATE
+            SET expiration_time = EXCLUDED.expiration_time
+            WHERE EXCLUDED.code = :code
+        """)
+        db.execute(query, {"email": email, "code": code})
+        db.commit()
+    finally:
+        db.close()
+
 
 
 def update_user(user_id: int, new_data: dict) -> bool:

@@ -21,13 +21,6 @@ depends_on: Union[str, Sequence[str], None] = ${repr(depends_on)}
 
 def upgrade() -> None:
     ${upgrades if upgrades else "pass"}
-    admin_password_hash = get_password_hash("Pa$sW0rd")
-    op.execute(
-        f"""
-        INSERT INTO users (username, email, password, is_admin, is_disabled, registration_time)
-        VALUES ('admin', 'admin@dbcd.oky.wiki', '{admin_password_hash}', true, false, now())
-        """
-    )
 
 
 def downgrade() -> None:
