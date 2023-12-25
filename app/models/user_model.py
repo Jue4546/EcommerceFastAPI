@@ -1,5 +1,5 @@
 """用户模型"""
-from typing import Union
+from typing import Union, Optional
 
 from pydantic import BaseModel, EmailStr
 
@@ -24,15 +24,42 @@ class UserInDB(BaseUser):
     hashed_password: Union[str, None] = None
 
 
-"""
 # 用户地址模型
-class Address(BaseModel):
-    street: str
+class AddressBase(BaseModel):
+    province: str
     city: str
-    state: str
+    district: str
+    street: str
+    postal_code: str
     detail: str
+    is_default: bool
 
 
+"""
+这样的Pydantic模型可以用于API端点的请求和响应验证。
+在路由处理函数中，你可以使用AddressCreate来验证创建请求，
+AddressUpdate来验证更新请求，而Address则可以用于返回。
+"""
+
+
+class AddressCreate(AddressBase):
+    pass
+
+
+class AddressUpdate(AddressBase):
+    pass
+
+
+class Address(AddressBase):
+    id: int
+    user_id: int
+    is_default: Optional[bool]
+
+    class Config:
+        orm_mode = True
+
+
+"""
 # 用户个人资料模型
 class UserProfile(BaseModel):
     full_name: str

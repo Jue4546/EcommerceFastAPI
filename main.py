@@ -8,8 +8,10 @@ from fastapi.responses import FileResponse
 from app.api.v1 import test_route, user_route, auth_route
 from app.api.v1.auth_route import account
 from app.utils.email_utils import account
-from app.api.v1.routes import orders
-from app.api.v1.routes import qproducts
+from app.api.v1 import address_route
+# from app.api.v1.routes import orders
+# from app.api.v1.routes import qproducts
+
 
 load_dotenv()
 
@@ -19,8 +21,9 @@ app = FastAPI()
 app.include_router(user_route.router)  # 添加用户管理模块的路由
 app.include_router(auth_route.router)  # 添加认证模块的路由
 app.include_router(test_route.router)  # 添加测试模块的路由，用于判断服务是否正常运行
-app.include_router(orders.router)  # 添加订单模块的路由
-app.include_router(qproducts.router, prefix="/products")
+# app.include_router(orders.router)  # 添加订单模块的路由
+# app.include_router(qproducts.router, prefix="/products")
+app.include_router(address_route.router)
 
 
 @app.get("/")

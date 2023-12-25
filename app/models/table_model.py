@@ -25,12 +25,14 @@ class User(Base):
 class Address(Base):
     __tablename__ = 'address'
     id = Column(Integer, primary_key=True, comment='地址ID')
-    user_id = Column(Integer, ForeignKey('user.id'), nullable=False, comment='用户ID')
-    country = Column(String(100), comment='国家')
-    province_or_state = Column(String(100), comment='省份/州')
-    city = Column(String(100), comment='城市')
-    street = Column(String(255), comment='街道')
-    postal_code = Column(String(20), comment='邮政编码')
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False, index=True, comment='用户ID')
+    # 应该是只考虑国内，所以把国家字段注释掉了
+    # country = Column(String(100), index=True, comment='国家')
+    province_or_state = Column(String(100), index=True, comment='省份/州')
+    city = Column(String(100), index=True, comment='城市')
+    district = Column(String(100), index=True, comment='区')
+    street = Column(String(255), index=True, comment='街道')
+    postal_code = Column(String(20), index=True, comment='邮政编码')
     is_default = Column(Boolean, default=False, comment='是否默认')
 
     user = relationship("User", back_populates="addresses")
