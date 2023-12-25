@@ -1,18 +1,17 @@
 """认证路由：api/auth_route.py"""
 import os
-from O365 import Account
-from pydantic import EmailStr
-
-from app.db.crud.mail_crud import PostgresBackend
 from datetime import timedelta
+
+from O365 import Account
+from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException, status, Depends, Request
 from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
-from app.services import auth_service
-from app.models.token_model import *
-from dotenv import load_dotenv
+from pydantic import EmailStr
 
-from services import user_service
+from app.db.crud.mail_crud import PostgresBackend
+from app.models.token_model import *
+from app.services import auth_service, user_service
 
 load_dotenv()
 callback = os.getenv('API_URL') + "/auth/microsoft/callback"

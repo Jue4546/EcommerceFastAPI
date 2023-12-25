@@ -1,8 +1,8 @@
 from O365.utils.token import BaseTokenBackend, log
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.db.base import SessionLocal
 from app.models.table_model import Token as TokenModel
-from sqlalchemy.exc import SQLAlchemyError
 
 
 class PostgresBackend(BaseTokenBackend):

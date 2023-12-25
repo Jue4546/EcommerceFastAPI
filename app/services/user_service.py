@@ -55,4 +55,3 @@ def update_user_info(user_id: int, new_data: BaseUser) -> BaseUser:
 def fetch_all_users() -> List[BaseUser]:
     """获取所有用户信息的服务逻辑"""
     return select_all_users()
-
