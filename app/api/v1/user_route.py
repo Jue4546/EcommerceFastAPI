@@ -25,7 +25,7 @@ async def send_verification_code(email: str):
 
 
 @router.post("/register", tags=["用户管理模块"])
-async def register_user(username: str, password: str, email: str, verification_code: str):
+async def register_user(username: str, password: str, email: EmailStr, verification_code: str):
     """用户注册路由"""
     user = RegisterUser(
         username=username,
@@ -67,16 +67,28 @@ async def get_all_users_info(current_user: BaseUser = Depends(auth_service.get_c
 
 
 @router.put("/user/me", tags=["用户管理模块"], response_model=BaseUser)
-async def update_user_info(user_info: BaseUser, current_user: UserInDB = Depends(auth_service.get_current_user_db)):
+async def update_user_info(new_username: str = None, new_email: EmailStr = None,
+                           current_user: UserInDB = Depends(auth_service.get_current_user_db)):
     """用户信息更新路由"""
-    updated_user = user_service.update_user_info(current_user.id, user_info)
-    if not updated_user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return updated_user
+    # 检查新用户名和新电子邮件是否为空，如果不为空，才创建新的用户信息对象
+    if new_username is not None or new_email is not None:
+        user_info = BaseUser(
+            username=new_username or current_user.username,
+            email=new_email or current_user.email,
+            is_disabled=current_user.is_disabled,
+            is_admin=current_user.is_admin
+        )
+        updated_user = user_service.update_user_info(current_user.id, user_info)
+        if not updated_user:
+            raise HTTPException(status_code=404, detail="User not found")
+        return updated_user
+    else:
+        raise HTTPException(status_code=400, detail="Both username and email cannot be empty")
 
 
 @router.post("/user/reset-password", tags=["用户管理模块"])
-async def reset_user_password(user_email: EmailStr = None, current_user: UserInDB = Depends(auth_service.get_current_user_db)):
+async def reset_user_password(verification_code: str, new_password: str, user_email: EmailStr = None,
+                              current_user: UserInDB = Depends(auth_service.get_current_user_db)):
     """密码重置路由"""
     if not current_user.is_admin:
         if user_email == current_user.email or user_email is None:
@@ -86,5 +98,8 @@ async def reset_user_password(user_email: EmailStr = None, current_user: UserInD
     else:
         if user_email is None:
             raise HTTPException(status_code=400, detail="Email not provided")
-    user_service.reset_password(user_email)
-    return {"message": "Password reset request sent"}
+    success = user_service.reset_password(current_user.email, user_email, verification_code, new_password)
+    if success:
+        return {"message": "Password reset request sent"}
+    else:
+        return {"message": "Reset request failed"}

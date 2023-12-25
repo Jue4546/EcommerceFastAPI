@@ -1,6 +1,8 @@
 """认证路由：api/auth_route.py"""
 import os
 from O365 import Account
+from pydantic import EmailStr
+
 from app.db.crud.mail_crud import PostgresBackend
 from datetime import timedelta
 from fastapi import APIRouter, HTTPException, status, Depends, Request
@@ -9,6 +11,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from app.services import auth_service
 from app.models.token_model import *
 from dotenv import load_dotenv
+
+from services import user_service
 
 load_dotenv()
 callback = os.getenv('API_URL') + "/auth/microsoft/callback"
@@ -53,6 +57,15 @@ async def auth_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()
             data={"sub": user.username}, expires_delta=access_token_expires
         )
         return {"access_token": access_token, "token_type": "bearer"}
+
+
+@router.post("/reset-password", tags=["认证模块"])
+async def reset_password(user_email: EmailStr, verification_code: str, new_password: str):
+    success = user_service.reset_password(user_email, user_email, verification_code, new_password)
+    if success:
+        return {"message": "Password reset request sent"}
+    else:
+        return {"message": "Reset request failed"}
 
 
 @router.get("/auth/microsoft", tags=["认证模块"])
