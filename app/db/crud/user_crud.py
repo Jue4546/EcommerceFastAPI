@@ -24,7 +24,7 @@ def insert_user(user: RegisterUser) -> BaseUser:
                     is_disabled=user.is_disabled, is_admin=user.is_admin)
 
 
-def get_user(username: str, mode: str = None) -> Union[UserInDB, BaseUser, None]:
+def get_user_by_name(username: str, mode: str = None) -> Union[UserInDB, BaseUser, None]:
     """根据用户名从数据库中获取用户信息"""
     db = SessionLocal()
     select_query = text('SELECT id, username, email, password, is_disabled, is_admin FROM "user" '
@@ -48,13 +48,23 @@ def get_user(username: str, mode: str = None) -> Union[UserInDB, BaseUser, None]
         return None
 
 
-def get_all_users() -> List[BaseUser]:
+def select_all_users() -> List[BaseUser]:
     """从数据库中获取所有用户信息"""
     db = SessionLocal()
     select_all_query = text('SELECT id, username, email, password, is_disabled, is_admin FROM "user"')
     users_data = db.execute(select_all_query).fetchall()
     db.close()
-    users_db = [BaseUser(**dict(user_data)) for user_data in users_data]
+    users_db = [
+        BaseUser(
+            id=user_tuple[0],
+            username=user_tuple[1],
+            email=user_tuple[2],
+            password=user_tuple[3],
+            is_disabled=user_tuple[4],
+            is_admin=user_tuple[5]
+        )
+        for user_tuple in users_data
+    ]
     return users_db
 
 
@@ -103,8 +113,13 @@ def insert_verification_code(email: str, code: str):
             INSERT INTO verification_code (email, code, created_at, expiration_time, is_used) 
             VALUES (:email, :code, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '10 MINUTE', FALSE)
             ON CONFLICT (email) DO UPDATE
-            SET expiration_time = EXCLUDED.expiration_time
-            WHERE EXCLUDED.code = :code
+            SET 
+                code = :code,
+                created_at = CURRENT_TIMESTAMP,
+                expiration_time = CURRENT_TIMESTAMP + INTERVAL '10 MINUTE',
+                is_used = FALSE
+            WHERE 
+                verification_code.email = EXCLUDED.email
         """)
         db.execute(query, {"email": email, "code": code})
         db.commit()
@@ -112,18 +127,29 @@ def insert_verification_code(email: str, code: str):
         db.close()
 
 
-def update_user(user_id: int, new_data: dict) -> bool:
+def update_user_by_id(user_id: int, new_data: dict) -> BaseUser:
     """根据用户ID更新用户信息"""
     db = SessionLocal()
-    update_query = text('UPDATE "user" SET username = :username, email = :email, password = :password '
+    update_query = text('UPDATE "user" SET username = :username, email = :email '
                         'WHERE id = :user_id')
     db.execute(update_query, {
         'username': new_data['username'],
         'email': new_data['email'],
-        'password': new_data['password'],
         'user_id': user_id
     })
     db.commit()
-    affected_rows = db.execute("SELECT ROW_COUNT()").fetchone()[0]
-    db.close()
-    return affected_rows > 0
+
+    return get_user_by_name(new_data['username'], mode='normal')
+
+
+def update_password_by_username(user_email: str, new_password: str) -> bool:
+    """根据用户邮箱更新用户密码"""
+    db = SessionLocal()
+    try:
+        update_query = text('UPDATE "user" SET password = :password WHERE email = :email')
+        db.execute(update_query, {'password': new_password, 'email': user_email})
+        db.commit()
+        affected_rows = db.execute("SELECT ROW_COUNT()").fetchone()[0]
+        return affected_rows > 0
+    finally:
+        db.close()

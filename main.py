@@ -1,5 +1,7 @@
+import os
 import subprocess
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
@@ -8,6 +10,8 @@ from app.api.v1.auth_route import account
 from app.utils.email_utils import account
 from app.api.v1.routes import orders
 from app.api.v1.routes import qproducts
+
+load_dotenv()
 
 app = FastAPI()
 
@@ -35,5 +39,6 @@ async def startup_event():
         print("Database initialization completed!")
     except subprocess.CalledProcessError as e:
         print(f"Error while initializing database: {e}")
-    # if not account.is_authenticated:
-    #    account.authenticate()
+    # 仅在开发环境下使用
+    if os.getenv('API_URL') == 'http://localhost:8000' and not account.is_authenticated:
+        account.authenticate()

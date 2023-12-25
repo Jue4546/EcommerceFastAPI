@@ -7,10 +7,11 @@ Create Date: 2023-12-24 15:03:02.511202
 """
 from typing import Sequence, Union
 
-from alembic import op
 import sqlalchemy as sa
-from app.services.auth_service import get_password_hash
+from alembic import op
 from sqlalchemy.dialects import postgresql
+
+from app.services.auth_service import get_password_hash
 
 # revision identifiers, used by Alembic.
 revision: str = 'f4b8152a4bb2'
