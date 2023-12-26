@@ -1,5 +1,6 @@
 """用户模型"""
 from typing import Union, Optional
+from enum import Enum
 
 from pydantic import BaseModel, EmailStr
 
@@ -24,8 +25,9 @@ class UserInDB(BaseUser):
     hashed_password: Union[str, None] = None
 
 
-# 用户地址模型
+# *********************************用户地址模型********************************************
 class AddressBase(BaseModel):
+    user_id: int
     province: str
     city: str
     district: str
@@ -56,7 +58,95 @@ class Address(AddressBase):
     is_default: Optional[bool]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+
+# *******************************订单状态及相关模型********************************************
+class OrderStatus(Enum):
+    """
+    订单状态
+    """
+    PENDING_PAYMENT = "待支付"
+    PROCESSING = "处理中"
+    PAID = "已支付"
+    PACKING = "已发货"
+    IN_TRANSIT = "运输中"
+    SHIPPED = "已收货"
+    DELIVERED = "已交付"
+    COMPLITED = "已完成"
+    CANCELED = "已取消"
+    RETURNED = "已退货"
+    REFUNDED = "已退款"
+    REFUND_FAILED = "退款失败"
+    REFUND_SUCCESS = "退款成功"
+    REFUND_PENDING = "退款中"
+    REFUND_REJECTED = "退款被拒绝"
+    REFUND_CANCELED = "退款取消"
+
+    @classmethod
+    def is_valid_status(cls, status):
+        # 判断状态是否有效
+        # 此方法返回一个布尔值，表示传入的状态是否存在于'OrderStatus'类的字典中
+        return status in cls.__dict__.values()
+
+
+class Order(BaseModel):
+    id: int  # 订单id
+    user_id: int  # 与订单关联的用户id
+    product_id: int  # 与订单关联的产品id
+    quantity: int  # 订单关联的产品数量
+    status: OrderStatus  # 订单状态
+    created_at: str  # 订单创建时间
+    updated_at: str  # 订单更新时间
+
+    class Config:
+        from_attributes = True
+
+
+class OrderCreate(BaseModel):
+    user_id: int  # 订单关联的用户id
+    product_id: int  # 订单关联的产品id
+    quantity: int  # 订单关联的产品数量
+    status: OrderStatus  # 订单状态
+
+    class Config:
+        from_attributes = True
+
+
+class OrderUpdate(BaseModel):
+    status: OrderStatus  # 订单状态
+
+    class Config:
+        from_attributes = True
+
+
+class OrderInDB(Order):
+    id: int  # 订单id
+    user_id: int  # 订单关联的用户id
+    product_id: int  # 订单关联的产品id
+    quantity: int  # 订单关联的产品数量
+    status: OrderStatus  # 订单状态
+    created_at: str  # 订单创建时间
+    updated_at: str  # 订单更新时间
+
+    class Config:
+        from_attributes = True
+
+
+class OrderInResponse(Order):
+    id: int  # 订单id
+    user_id: int  # 订单关联的用户id
+    product_id: int  # 订单关联的产品id
+    quantity: int  # 订单关联产品数量
+    status: OrderStatus  # 订单状态
+    created_at: str  # 订单创建时间
+    updated_at: str  # 订单更新时间
+
+    class Config:
+        from_attributes = True
+
+
+#   ****************************商品信息模型******************************
 
 
 """

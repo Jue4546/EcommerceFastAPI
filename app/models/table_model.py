@@ -6,6 +6,7 @@ from sqlalchemy.sql import func
 Base = declarative_base()
 
 
+#   *****************用户数据模型*****************************
 class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True, comment='用户ID')
@@ -22,6 +23,7 @@ class User(Base):
     carts = relationship('Cart', back_populates='user')
 
 
+# ***********************地址数据模型*****************************
 class Address(Base):
     __tablename__ = 'address'
     id = Column(Integer, primary_key=True, comment='地址ID')
@@ -39,6 +41,7 @@ class Address(Base):
     orders = relationship('Order', back_populates='address')
 
 
+# *****************************验证码数据模型***************************
 class VerificationCode(Base):
     __tablename__ = 'verification_code'
     id = Column(Integer, primary_key=True, index=True, comment='验证码ID')
@@ -49,12 +52,14 @@ class VerificationCode(Base):
     is_used = Column(Boolean, default=False, comment='是否已使用')
 
 
+# ***************************令牌*******************************
 class Token(Base):
     __tablename__ = 'token'
     type = Column(String, primary_key=True, index=True, comment='令牌类型')
     content = Column(JSON, comment='令牌内容')
 
 
+# *******************************订单数据模型*****************************
 class Order(Base):
     __tablename__ = 'order'
     id = Column(Integer, primary_key=True, comment='订单ID')
@@ -70,6 +75,7 @@ class Order(Base):
     order_detail = relationship('OrderDetail', back_populates='order')
 
 
+# ****************************订单详情数据模型*******************************
 class OrderDetail(Base):
     __tablename__ = 'order_detail'
     id = Column(Integer, primary_key=True, comment='订单详情ID')
@@ -82,6 +88,7 @@ class OrderDetail(Base):
     goods = relationship('GoodsInfo', back_populates='order_detail')
 
 
+# *****************************购物车数据模型********************************
 class Cart(Base):
     __tablename__ = 'cart'
     id = Column(Integer, primary_key=True, index=True, autoincrement=True, comment='购物车ID')
@@ -95,6 +102,7 @@ class Cart(Base):
     user = relationship('User', back_populates='carts')
 
 
+# *******************************商品信息数据模型*****************************
 class GoodsInfo(Base):
     __tablename__ = 'goods_info'
     id = Column(Integer, primary_key=True, index=True, autoincrement=True, comment='商品ID')

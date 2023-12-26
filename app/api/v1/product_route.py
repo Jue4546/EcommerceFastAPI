@@ -1,15 +1,13 @@
 
 from fastapi import APIRouter, Query, HTTPException, Depends
-from sqlalchemy.orm import Session
-# from app.db.database import get_db
-# 数据库怎么弄呢
-from app.db.crud.product import get_product_by_name
+
+from app.db.crud.product_crud import get_product_by_name
 
 router = APIRouter()
 
 
-@router.get("/products/")
-async def get_products(name: str = Query(..., regx=r'^[\u4e00-\u9fa5]+$')):
+@router.get("/products/", tags=["查询商品模块"])
+def get_products(name: str = Query(regx=r'^[\u4e00-\u9fa5]+$')):
     """
    查询商品信息的接口
 
