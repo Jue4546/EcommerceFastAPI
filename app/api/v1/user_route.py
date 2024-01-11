@@ -11,7 +11,7 @@ from app.utils import email_utils
 router = APIRouter()
 
 
-@router.post("/send-verification-code", tags=["用户管理模块"])
+@router.post("/send-verification-code", tags=["用户管理模块", "认证模块"])
 async def send_verification_code(email: str):
     """发送验证码路由"""
     verification_code = auth_service.generate_verification_code()
