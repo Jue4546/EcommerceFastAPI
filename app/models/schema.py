@@ -34,6 +34,7 @@ class Address(Base):
     city = Column(String(100), index=True, comment='城市')
     district = Column(String(100), index=True, comment='区')
     street = Column(String(255), index=True, comment='街道')
+    detail = Column(String(255), index=True, comment='详细地址')
     postal_code = Column(String(20), index=True, comment='邮政编码')
     is_default = Column(Boolean, default=False, comment='是否默认')
 

@@ -4,17 +4,22 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
-from app.api.v1 import test_route, user_route, auth_route, goods_route
+from app.api.v1 import test_route, user_route, auth_route, product_route, cart_route, address_route, order_route
 
 load_dotenv()
 
 app = FastAPI()
 
 # 添加路由
-app.include_router(user_route.router)  # 添加用户管理模块的路由
-app.include_router(auth_route.router)  # 添加认证模块的路由
-app.include_router(test_route.router)  # 添加测试模块的路由，用于判断服务是否正常运行
-app.include_router(goods_route.router) # 添加商品管理模块的路由
+app.include_router(test_route.router)     # 添加测试模块的路由，用于判断服务是否正常运行
+
+app.include_router(user_route.router)     # 添加用户管理模块的路由
+app.include_router(auth_route.router)     # 添加认证模块的路由
+app.include_router(product_route.router)  # 添加商品管理模块的路由
+app.include_router(cart_route.router)     # 添加购物车管理模块的路由
+app.include_router(address_route.router)  # 添加收货地址管理模块的路由
+app.include_router(order_route.router)    # 添加订单管理模块的路由
+
 
 @app.get("/")
 async def read_root():

@@ -3,7 +3,7 @@ from typing import Union
 from sqlalchemy import text
 
 from app.db.base import SessionLocal
-from app.db.crud.goods_crud import create_goods, delete_goods, get_goods
+from app.db.crud.product_crud import create_goods, delete_goods, get_goods
 from app.models.goods_model import BasicGoodsInfo, CreateGoods
 
 db = SessionLocal()

@@ -15,19 +15,6 @@ class BasicGoodsInfo(BaseModel):
     image: str
 
 
-# class Updated_GoodsInfo(BaseModel):
-#     id: int
-#     name: Optional[str] = None
-#     amount: Optional[int] = None
-#     unit_price: Optional[float] = None
-#     variety: Optional[str] = None
-#     color: Optional[str] = None
-#     occasion: Optional[str] = None
-#     description: Optional[str] = None
-#     image: Optional[str] = None
-
-
-# 管理员增
 class CreateGoods(BaseModel):
     id: int = Field(..., title="ID", description="商品ID")
     name: str = Field(..., title="Name", description="商品名称")
@@ -40,7 +27,6 @@ class CreateGoods(BaseModel):
     image: str = Field(..., title="Image", description="图片")
 
 
-# 管理员改
 class UpdateGoods(BaseModel):
     id: Optional[int] = None
     name: Optional[str] = None

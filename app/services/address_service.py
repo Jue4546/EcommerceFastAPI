@@ -1,31 +1,42 @@
-from sqlalchemy.orm import Session
-from app.db.crud import address_crud
-from app.models import user_model
+"""收货地址服务逻辑：service/address_service.py"""
+from typing import List
+
+from app.models.address_model import Address, AddressCreate, AddressUpdate
+from app.db.crud.address_crud import create_address_db, get_address_db, get_addresses_db, update_address_db, \
+    delete_address_db
 
 
-def create_address(db: Session, address_data: user_model.AddressCreate):
-    return address_crud.create_address(db, address_data)
+def create_address(address_create: AddressCreate) -> Address:
+    return create_address_db(address_create)
 
 
-def update_address(db: Session, address_id: int, address_data: user_model.AddressCreate):
-    return address_crud.update_address(db, address_id, address_data)
+def get_address(address_id: int, user_id: int) -> Address:
+    return get_address_db(address_id, user_id)
 
 
-def delete_address(db: Session, address_id: int):
-    return address_crud.delete_address(db, address_id)
+def get_addresses(user_id: int, skip: int = 0, limit: int = 10) -> List[Address]:
+    return get_addresses_db(user_id, skip=skip, limit=limit)
 
 
-def get_addresses(db: Session, user_id: int):
-    return address_crud.get_address(db, user_id)
+def update_address(address_id: int, address_update: AddressUpdate) -> Address:
+    return update_address_db(address_id, address_update)
 
 
-def get_addresses_by_user_id(db: Session, user_id: int):
-    return address_crud.get_addresses_by_user_id(db, user_id)
+def delete_address_admin(address_id: int) -> Address:
+    return delete_address_db(address_id)
 
 
-def get_address(db: Session, address_id: int):
-    return address_crud.get_address(db, address_id)
+def get_default_address_id(user_id: int) -> int:
+    addresses = get_addresses(user_id)
+    for address in addresses:
+        if address.is_default:
+            return address.id
+    return addresses[0].id
 
 
-def get_default_address(db: Session, user_id: int, address_curd=None):
-    return address_curd.get_default_address(db, user_id)
+def delete_address(address_id: int, user_id: int) -> Address:
+    address = get_address_db(address_id, user_id)
+    if address:
+        return delete_address_db(address_id)
+    else:
+        return None
